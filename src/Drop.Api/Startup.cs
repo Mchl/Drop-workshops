@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Drop.Api.Services;
@@ -28,7 +26,8 @@ namespace Drop.Api
         {
             services.AddScoped<IMessenger, Messenger>();
             services.Configure<ApiOptions>(_configuration.GetSection("api"));
-            services.AddSingleton<DummyMiddleware>();
+            services.AddScoped<DummyMiddleware>();
+            services.AddScoped<ErrorHandlerMiddleware>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +37,8 @@ namespace Drop.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.Use((ctx, next) =>
             {
@@ -52,6 +53,18 @@ namespace Drop.Api
             });
 
             app.UseMiddleware<DummyMiddleware>();
+
+            app.Use(async (ctx, next) =>
+            {
+                if (ctx.Request.Query.TryGetValue("token", out var token) && token == "secret")
+                {
+                    await ctx.Response.WriteAsync("Secret");
+                    return;
+                }
+
+                await next();
+            });
+
             
             app.UseRouting();
 
