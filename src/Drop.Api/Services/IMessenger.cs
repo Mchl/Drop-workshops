@@ -1,4 +1,6 @@
 using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Drop.Api.Services
 {
@@ -10,14 +12,19 @@ namespace Drop.Api.Services
     public class Messenger : IMessenger
     {
         private readonly Guid _id = Guid.NewGuid();
-        
-        public string GetMessage() => $"Hello [id: {_id}]";
-    }
-    
-    public class MessengerV2 : IMessenger
-    {
-        private readonly Guid _id = Guid.NewGuid();
-        
-        public string GetMessage() => $"Hello v2 [id: {_id}]";
+        private readonly IOptions<ApiOptions> _apiOptions;
+        private readonly ILogger<Messenger> _logger;
+
+        public Messenger(IOptions<ApiOptions> apiOptions, ILogger<Messenger> logger)
+        {
+            _apiOptions = apiOptions;
+            _logger = logger;
+        }
+
+        public string GetMessage()
+        {
+            _logger.LogInformation("Invoking get message");
+            return $"{_apiOptions.Value.Name} [id: {_id}]";
+        }
     }
 }

@@ -7,6 +7,7 @@ using Drop.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -14,12 +15,19 @@ namespace Drop.Api
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IMessenger, Messenger>();
-            services.AddScoped<IMessenger, MessengerV2>();
+            services.Configure<ApiOptions>(_configuration.GetSection("api"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,11 +61,13 @@ namespace Drop.Api
                     await context.Response.WriteAsync("{}");
                 });
                 
-                endpoints.MapPost("parcels", async context =>
+                endpoints.MapPost("parcels", context =>
                 {
                     var parcelId = Guid.NewGuid();
                     context.Response.Headers.Add(HttpResponseHeader.Location.ToString(), $"parcels/{parcelId}");
                     context.Response.StatusCode = 201;
+                    
+                    return Task.CompletedTask;
                 });
             });
         }
