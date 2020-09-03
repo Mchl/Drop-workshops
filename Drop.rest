@@ -5,3 +5,10 @@ GET {{url}}
 
 ###
 POST {{url}}/parcels
+Content-Type: application/json
+
+{
+  "Id": "00000000-0000-0000-0000-000000000001",
+  "Address": "Warsaw",
+  "Size": "Medium"
+}

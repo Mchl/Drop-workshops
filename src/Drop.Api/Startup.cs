@@ -1,14 +1,19 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Drop.Api.Services;
 using Drop.Application;
+using Drop.Application.Commands;
+using Drop.Application.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Drop.Api
 {
@@ -39,7 +44,7 @@ namespace Drop.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.Use((ctx, next) =>
@@ -67,7 +72,7 @@ namespace Drop.Api
                 await next();
             });
 
-            
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
@@ -81,23 +86,41 @@ namespace Drop.Api
                 endpoints.MapGet("parcels/{parcelId:guid}", async context =>
                 {
                     var parcelId = Guid.Parse(context.Request.RouteValues["parcelId"].ToString());
-                    if (parcelId == Guid.Empty)
+                    var parcelService = context.RequestServices.GetRequiredService<IParcelsService>();
+                    var parcel = await parcelService.GetAsync(parcelId);
+                    if (parcel is null)
                     {
                         context.Response.StatusCode = (int) HttpStatusCode.NotFound;
                         return;
                     }
 
                     context.Response.ContentType = "application/json";
-                    await context.Response.WriteAsync("{}");
+                    // var json= JsonSerializer.Serialize(parcel);
+                    var json = JsonConvert.SerializeObject(parcel);
+                    await context.Response.WriteAsync(json);
                 });
-                
-                endpoints.MapPost("parcels", context =>
+
+                endpoints.MapPost("parcels", async context =>
                 {
-                    var parcelId = Guid.NewGuid();
-                    context.Response.Headers.Add(HttpResponseHeader.Location.ToString(), $"parcels/{parcelId}");
+                    var body = context.Request.Body;
+                    if (body is null)
+                    {
+                        context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        return;
+                    }
+
+                    var json = await new StreamReader(body).ReadToEndAsync();
+                    // var command = JsonSerializer.Deserialize<AddParcel>(json, new JsonSerializerOptions
+                    // {
+                    //     PropertyNameCaseInsensitive = true
+                    // });
+
+                    var command = JsonConvert.DeserializeObject<AddParcel>(json);
+                    var parcelService = context.RequestServices.GetRequiredService<IParcelsService>();
+                    await parcelService.AddAsync(command);
+
+                    context.Response.Headers.Add(HttpResponseHeader.Location.ToString(), $"parcels/{command.Id}");
                     context.Response.StatusCode = 201;
-                    
-                    return Task.CompletedTask;
                 });
             });
         }

@@ -1,3 +1,4 @@
+using Drop.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Drop.Application
@@ -6,6 +7,8 @@ namespace Drop.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.AddScoped<IParcelsService, ParcelsService>();
+            
             return services;
         }
     }
