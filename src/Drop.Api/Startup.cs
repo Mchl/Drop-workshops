@@ -28,6 +28,7 @@ namespace Drop.Api
         {
             services.AddScoped<IMessenger, Messenger>();
             services.Configure<ApiOptions>(_configuration.GetSection("api"));
+            services.AddSingleton<DummyMiddleware>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +39,20 @@ namespace Drop.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.Use((ctx, next) =>
+            {
+                Console.WriteLine("I'm the first middleware.");
+                return next();
+            });
+
+            app.Use(async (ctx, next) =>
+            {
+                Console.WriteLine("I'm the second middleware.");
+                await next();
+            });
+
+            app.UseMiddleware<DummyMiddleware>();
+            
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
