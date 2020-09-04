@@ -12,8 +12,4 @@
     <ProjectReference Include="..\Drop.Core\Drop.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Exceptions" />
-  </ItemGroup>
-
 </Project>

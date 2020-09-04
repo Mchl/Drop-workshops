@@ -36,7 +36,6 @@ namespace Drop.Api
             services.AddScoped<IMessenger, Messenger>();
             services.Configure<ApiOptions>(_configuration.GetSection("api"));
             services.AddScoped<DummyMiddleware>();
-            services.AddScoped<ErrorHandlerMiddleware>();
             services.AddApplication();
             services.AddInfrastructure();
             services.AddControllers().AddNewtonsoftJson();
@@ -60,7 +59,7 @@ namespace Drop.Api
                 swagger.SwaggerEndpoint("/swagger/v1/swagger.json", "Drop API v1");
             });
 
-            app.UseMiddleware<ErrorHandlerMiddleware>();
+            app.UseInfrastructure();
 
             app.Use((ctx, next) =>
             {
@@ -86,7 +85,6 @@ namespace Drop.Api
 
                 await next();
             });
-
 
             app.UseRouting();
 
