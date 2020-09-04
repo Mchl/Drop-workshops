@@ -1,5 +1,6 @@
 using Drop.Core.Repositories;
 using Drop.Infrastructure.Caching;
+using Drop.Infrastructure.Mongo;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ namespace Drop.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
+            services.AddMongo();
             services.AddScoped<ErrorHandlerMiddleware>();
             services.AddMemoryCache();
             services.AddScoped<IParcelsRepository, InMemoryParcelsRepository>();
