@@ -10,10 +10,10 @@ namespace Drop.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
+            // services.AddScoped<IParcelsRepository, InMemoryParcelsRepository>();
             services.AddMongo();
             services.AddScoped<ErrorHandlerMiddleware>();
             services.AddMemoryCache();
-            services.AddScoped<IParcelsRepository, InMemoryParcelsRepository>();
             
             return services;
         }

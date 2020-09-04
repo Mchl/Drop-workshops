@@ -1,6 +1,12 @@
+using Drop.Core.Repositories;
+using Drop.Core.ValueObjects;
+using Drop.Infrastructure.Mongo.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 
 namespace Drop.Infrastructure.Mongo
@@ -9,7 +15,7 @@ namespace Drop.Infrastructure.Mongo
     {
         public static IServiceCollection AddMongo(this IServiceCollection services)
         {
-            // services.AddScoped<IParcelsRepository, MongoParcelsRepository>();
+            services.AddScoped<IParcelsRepository, MongoParcelsRepository>();
             IConfiguration configuration;
             using (var serviceProvider = services.BuildServiceProvider())
             {
@@ -34,6 +40,13 @@ namespace Drop.Infrastructure.Mongo
                 var client = sp.GetService<IMongoClient>();
                 return client.GetDatabase(options.Database);
             });
+
+            ConventionRegistry.Register("drop", new ConventionPack
+            {
+                new EnumRepresentationConvention(BsonType.String),
+                new CamelCaseElementNameConvention(),
+                new IgnoreExtraElementsConvention(true),
+            }, _ => true);
 
             return services;
         }

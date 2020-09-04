@@ -12,6 +12,6 @@ POST {{url}}/api/parcels
 Content-Type: application/json
 
 {
-  "address": "",
+  "address": "Warsaw",
   "size": "Medium"
 }
