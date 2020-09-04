@@ -11,7 +11,7 @@ namespace Drop.Application.Commands
 
         public AddParcel(Guid id, string size, string address)
         {
-            Id = id;
+            Id = id == Guid.Empty ? Guid.NewGuid() : id;
             Size = size;
             Address = address;
         }

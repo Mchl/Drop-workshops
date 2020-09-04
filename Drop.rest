@@ -1,14 +1,17 @@
 @url = http://localhost:5000
+@parcelId = c42b7794-1616-4eea-b8b5-5225758f9d26
 
 ###
 GET {{url}}
 
 ###
-POST {{url}}/parcels
+GET {{url}}/api/parcels/{{parcelId}}
+
+###
+POST {{url}}/api/parcels
 Content-Type: application/json
 
 {
-  "Id": "00000000-0000-0000-0000-000000000001",
-  "Address": "Warsaw",
-  "Size": "Medium"
+  "address": "Warsaw",
+  "size": "Medium"
 }
