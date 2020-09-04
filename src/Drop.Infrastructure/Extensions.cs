@@ -1,7 +1,10 @@
+using Convey;
+using Convey.Auth;
 using Drop.Core.Repositories;
 using Drop.Infrastructure.Caching;
 using Drop.Infrastructure.Mongo;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Drop.Infrastructure
@@ -14,6 +17,9 @@ namespace Drop.Infrastructure
             services.AddMongo();
             services.AddScoped<ErrorHandlerMiddleware>();
             services.AddMemoryCache();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            
+            services.AddConvey().AddJwt().Build();
             
             return services;
         }

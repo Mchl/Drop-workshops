@@ -1,5 +1,6 @@
 @url = http://localhost:5000
 @parcelId = e6b4b95e-fbe6-433e-8d3b-424f3956a60d
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YzQwYzEzZS1iYmE3LTQ1ZDgtOWJmOC04OWY4MDkwZGM3ZWEiLCJ1bmlxdWVfbmFtZSI6IjVjNDBjMTNlLWJiYTctNDVkOC05YmY4LTg5ZjgwOTBkYzdlYSIsImp0aSI6ImZjZmY1NWI3LTUyMGMtNGY1ZS04MmQ2LWYxYmUxNTNmNTM5ZCIsImlhdCI6IjE1OTkyMjUwNTUiLCJuYmYiOjE1OTkyMjUwNTUsImV4cCI6MTU5OTIyNTExNSwiaXNzIjoiZHJvcCJ9.fUnjHyW0Xjh5TZH7UEsd_r-UuQ02_n7eXwwbhDlnkfI
 
 ###
 GET {{url}}
@@ -14,4 +15,15 @@ Content-Type: application/json
 {
   "address": "Warsaw",
   "size": "Medium"
+}
+
+###
+GET {{url}}/api/secret
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzYzEyNTBjOC1kNmI4LTQ3NjAtOWRhMi0yM2M5ODEwNThiYTkiLCJ1bmlxdWVfbmFtZSI6IjNjMTI1MGM4LWQ2YjgtNDc2MC05ZGEyLTIzYzk4MTA1OGJhOSIsImp0aSI6ImNmYjllOTEwLTQ5YTktNDJkOS05ODA5LTJiNjE2MDY5OGUwNCIsImlhdCI6IjE1OTkyMjUyMDUiLCJuYmYiOjE1OTkyMjUyMDUsImV4cCI6MTU5OTIyNTI2NSwiaXNzIjoiZHJvcCJ9.u25sW_IPSdd7vgG6x9UIFvLpPkDJdSALKJhvV4ZqYJ4
+
+
+###
+POST {{url}}/api/sign-in
+
+{
 }
