@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Drop.Infrastructure\Drop.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="certs\**" CopyToPublishDirectory="Always" />
+  </ItemGroup>
+
 </Project>
