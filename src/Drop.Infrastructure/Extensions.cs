@@ -18,8 +18,12 @@ namespace Drop.Infrastructure
             services.AddScoped<ErrorHandlerMiddleware>();
             services.AddMemoryCache();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            
             services.AddConvey().AddJwt().Build();
+
+            services.AddAuthorization(a => a.AddPolicy("secret.read", p =>
+            {
+                p.RequireClaim("permissions", "secret:read");
+            }));
             
             return services;
         }

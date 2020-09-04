@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Convey.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,12 +22,16 @@ namespace Drop.Api.Controllers
         public ActionResult<JsonWebToken> SignIn()
         {
             var userId = Guid.NewGuid().ToString();
-            var jwt = _jwtHandler.CreateToken(userId);
+            var role = "admin";
+            var jwt = _jwtHandler.CreateToken(userId, role, claims: new Dictionary<string, IEnumerable<string>>
+            {
+                ["permissions"] = new[] {"secret:read", "secret:update"}
+            });
 
             return jwt;
         }
 
-        [Authorize]
+        [Authorize(Policy = "secret.read")]
         [HttpGet("secret")]
         public ActionResult<string> Secret()
         {
