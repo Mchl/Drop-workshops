@@ -6,6 +6,8 @@ using Drop.Api.Services;
 using Drop.Application;
 using Drop.Application.Commands;
 using Drop.Application.Services;
+using Drop.Infrastructure;
+using Drop.Infrastructure.Caching;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -36,6 +38,7 @@ namespace Drop.Api
             services.AddScoped<DummyMiddleware>();
             services.AddScoped<ErrorHandlerMiddleware>();
             services.AddApplication();
+            services.AddInfrastructure();
             services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(swagger =>
             {

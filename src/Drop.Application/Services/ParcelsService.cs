@@ -4,26 +4,45 @@ using System.Linq;
 using System.Threading.Tasks;
 using Drop.Application.Commands;
 using Drop.Application.DTO;
+using Drop.Core.Entities;
+using Drop.Core.Repositories;
+using Drop.Core.ValueObjects;
 
 namespace Drop.Application.Services
 {
     public class ParcelsService : IParcelsService
     {
-        private static readonly ISet<ParcelDto> Parcels = new HashSet<ParcelDto>();
+        private readonly IParcelsRepository _parcelsRepository;
 
-        public Task<ParcelDto> GetAsync(Guid id) => Task.FromResult(Parcels.SingleOrDefault(p => p.Id == id));
-    
-        public Task AddAsync(AddParcel request)
+        public ParcelsService(IParcelsRepository parcelsRepository)
         {
-            Parcels.Add(new ParcelDto
-            {
-                Id = request.Id,
-                Size = request.Size,
-                Address = request.Address,
-                State = "new"
-            });
+            _parcelsRepository = parcelsRepository;
+        }
 
-            return Task.CompletedTask;
+        public async Task<ParcelDto> GetAsync(Guid id)
+        {
+            var parcel = await _parcelsRepository.GetAsync(id);
+
+            return parcel is null
+                ? null
+                : new ParcelDto
+                {
+                    Id = parcel.Id,
+                    Address = parcel.Address,
+                    Size = parcel.Size.ToString(),
+                    State = parcel.State.ToString()
+                };
+        }
+    
+        public async Task AddAsync(AddParcel request)
+        {
+            if (!Enum.TryParse<ParcelSize>(request.Size, true, out var size))
+            {
+                throw new ArgumentException(request.Size, nameof(request.Size));
+            }
+        
+            var parcel = new Parcel(request.Id, size, request.Address);
+            await _parcelsRepository.AddAsync(parcel);
         }
     }
 }
